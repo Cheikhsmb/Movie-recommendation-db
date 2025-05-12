@@ -1,0 +1,1 @@
+“INSERT statements (or LOAD DATA) to add dummy users, movies, ratings…”
