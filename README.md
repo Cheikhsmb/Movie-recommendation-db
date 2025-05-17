@@ -20,7 +20,7 @@ With this foundation, you can run collaborative-filtering queries like “users 
 * 📚 Provide step-by-step setup instructions so everyone can clone, load, and test
 * 🎤 Bundle ER diagrams, scripts, data, and example queries for a smooth demo presentation
 
-Name: Fallou 
+**Name: Fallou**  
 
 🖊️ ER Diagram & Data Model Lead
 
@@ -31,7 +31,7 @@ Design and draw the ER diagram (entities, relationships, keys)
 Define each table’s columns, data types, and normalization rules
 
 
-Name: Ndieme Gueye 
+**Name: Ndieme Gueye** 
 
 💾 Database Implementation & Sample Data Engineer
 
@@ -42,7 +42,7 @@ Create and load realistic sample data (INSERTs or CSV bulk-loads)
 Verify referential integrity and performance (test invalid inserts, add indexes)
 
 
-Name: Bamba Samb 
+**Name: Bamba Samb** 
 
 🔍 Recommendation Logic & Presentation Specialist
 
