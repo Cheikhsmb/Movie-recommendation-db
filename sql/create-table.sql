@@ -1,1 +1,0 @@
-'ALL the CREATE TABLE statements with keys & constraints.'
