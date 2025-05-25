@@ -42,27 +42,19 @@ CREATE TABLE WatchHistory (
 );
 
 INSERT INTO Genres (genre_name) VALUES
-('Action'), ('Comedy'), ('Drama'), ('Sci-Fi'), ('Romance'),('Horror'),('Adventure');
+('Action'), ('Comedy'), ('Drama'), ('Sci-Fi'), ('Romance');
 
 INSERT INTO Users (username, email) VALUES
 ('Ndié', 'ndie@example.com'),
 ('Bamba', 'bamba@example.com'),
-('Fallou', 'fallou@example.com')
-('Aissatou', 'aissatou@example.com', ),
-('Moussa', 'moussa@example.com'),
-('Fatima', 'fatima@example.com');
+('Fallou', 'fallou@example.com');
 
 INSERT INTO Movies (title, release_year, genre_id) VALUES
 ('The Matrix', 1999, 4), -- Sci-Fi
 ('Inception', 2010, 4), -- Sci-Fi
 ('Superbad', 2007, 2), -- Comedy
 ('The Dark Knight', 2008, 1), -- Action
-('Titanic', 1997, 5), -- Romance
-('Get Out', 2017),
-('Jumanji: Welcome to the Jungle', 2017),
-('Mad Max: Fury Road', 2015),
-('La La Land', 2016),
-('The Shining', 1980);
+('Titanic', 1997, 5); -- Romance
 
 INSERT INTO Ratings (user_id, movie_id, rating) VALUES
 (1, 1, 4.5), -- Ndié rates The Matrix
@@ -71,22 +63,59 @@ INSERT INTO Ratings (user_id, movie_id, rating) VALUES
 (2, 1, 4.0), -- Bamba rates The Matrix
 (2, 4, 5.0), -- Bamba rates The Dark Knight
 (3, 2, 4.5), -- Fallou rates Inception
-(3, 3, 4.0), -- Fallou rates Superbad
-(4, 6, 4.8), -- Aissatou rates Get Out
-(4, 7, 3.5), -- Aissatou rates Jumanji
-(5, 8, 4.7), -- Moussa rates Mad Max
-(5, 9, 4.2), -- Moussa rates La La Land
-(6, 10, 4.0), -- Fatima rates The Shining
-(3, 6, 4.3);
+(3, 3, 4.0); -- Fallou rates Superbad
 
 INSERT INTO WatchHistory (user_id, movie_id, watched_at) VALUES
 (1, 1, '2025-05-01 10:00:00'), -- Ndié watched The Matrix
 (1, 3, '2025-05-02 15:00:00'), -- Ndié watched Superbad
 (2, 4, '2025-05-03 20:00:00'), -- Bamba watched The Dark Knight
-(3, 2, '2025-05-04 18:00:00'), -- Fallou watched Inception
-(5, 4, 6, '2025-05-13 18:00:00'), -- Aissatou watched Get Out
-(6, 5, 8, '2025-05-14 19:00:00'), -- Moussa watched Mad Max
-(7, 6, 10, '2025-05-15 17:30:00'), -- Fatima watched The Shining
-(8, 2, 7, '2025-05-16 16:00:00');
+(3, 2, '2025-05-04 18:00:00'); -- Fallou watched Inception
 
+-- Top 5 Highest-Rated Movies
+
+SELECT m.title, ROUND(AVG(r.rating), 2) AS avg_rating
+FROM Ratings r
+JOIN Movies m ON r.movie_id = m.movie_id
+GROUP BY m.movie_id, m.title
+ORDER BY avg_rating DESC
+LIMIT 5;
+
+-- Movies Watched by a specific user 
+
+SELECT m.title, w.watched_at
+FROM WatchHistory w
+JOIN Movies m ON w.movie_id = m.movie_id
+WHERE w.user_id = 1
+ORDER BY w.watched_at DESC;
+
+-- Users Who Liked Movie A Also Liked Movie B 
+
+SELECT DISTINCT m2.title
+FROM Ratings r1
+JOIN Ratings r2 ON r1.user_id = r2.user_id
+JOIN Movies m2 ON r2.movie_id = m2.movie_id
+WHERE r1.movie_id = 1
+  AND r1.rating >= 4
+  AND r2.rating >= 4
+  AND r2.movie_id != 1;
+
+--  Recommend Movies from a User’s Favorite Genre
+--  User's favorite genre based on average rating
+WITH FavoriteGenre AS (
+  SELECT m.genre_id
+  FROM Ratings r
+  JOIN Movies m ON r.movie_id = m.movie_id
+  WHERE r.user_id = 1
+  GROUP BY m.genre_id
+  ORDER BY AVG(r.rating) DESC
+  LIMIT 1
+)
+
+--  Movies in that genre the user hasn't watched yet
+SELECT m.title
+FROM Movies m
+WHERE m.genre_id = (SELECT genre_id FROM FavoriteGenre)
+  AND m.movie_id NOT IN (
+    SELECT movie_id FROM WatchHistory WHERE user_id = 1
+  );
 
